@@ -5,4 +5,28 @@
 # Introduction
 
 БОТ помощник при корона вирусе
-# botda
+# @crownvirusbot
+# Install package:
+
+# pip install -r requirements.txt
+
+# Configurate token:
+
+# config.py
+
+# Start bot:
+
+# Example/start.py
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+
