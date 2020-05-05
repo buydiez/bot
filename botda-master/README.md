@@ -8,15 +8,15 @@
 # @crownvirusbot
 # Install package:
 
-# pip install -r requirements.txt
+ pip install -r requirements.txt
 
 # Configurate token:
 
-# config.py
+ config.py
 
-# Start bot:
+ Start bot:
 
-# Example/start.py
+ Example/start.py
 #
 #
 #
