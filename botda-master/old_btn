@@ -1,0 +1,75 @@
+
+        UserID = event.from_chat
+
+
+        # buttons
+
+        # start action
+        bot.send_actions(chat_id=event.from_chat, actions=["typing"])
+        sleep(2)
+        bot.send_actions(chat_id=event.from_chat, actions=["looking"])
+        sleep(2)
+
+        # messages
+        user_firstname = bot.get_chat_info(chat_id=event.from_chat).json()['firstName'] #Имя пользователя
+
+        bot.send_text(chat_id=event.from_chat, text="👋 \nПривет, " + user_firstname + "."
+                                                    "\nЕсли вы ищете официальные новости о коронавирусе и COVID-19 🦠🦠🦠,"
+                                                    "вот пару доставерных источников из министерств здравоохранения.")
+
+        confirmed_count= CoronaApiInform()
+        bot.send_text(chat_id=event.from_chat, text="На текущий момент: \n \n"
+                                                    "🤒 Заболевшие: " + str(confirmed_count[0]) + "\n\n"
+                                                    "💀 Скончавшиеся: " + str(confirmed_count[1]) + "\n\n"
+                                                    "😷 Восстановились: " + str(confirmed_count[2]))
+
+
+        #КНОПКА - Доставерные источники
+        buttons = "[{}]".format(json.dumps([{"text": "Подробнее",  "callbackData": "call_button_corona_news","style": "primary"}]))
+        bot.send_text(chat_id=event.from_chat, text="Информация из доставерных источников\n 🇷🇺 России", inline_keyboard_markup=buttons)
+
+        # КНОПКА - Техника безопасности
+        buttons2 = "[{}]".format(json.dumps([{"text": "Подробнее",  "callbackData": "call_button_safety", "style": "primary"}]))
+        bot.send_text(chat_id=event.from_chat, text="😷💧Техника безопасности 🧼🤲", inline_keyboard_markup=buttons2)
+
+        #КНОПКА - Подписка
+        buttons2 = "[{}]".format(json.dumps([{"text": "Подписаться на оповещение",  "callbackData": "call_button_subscribe", "style": "primary"}]))
+        bot.send_text(chat_id=event.from_chat, text="⚠ Будьте в курсе всех событий! \nОформите подписку.", inline_keyboard_markup=buttons2)
+
+
+
+# Events Handlers Method
+from Handlers import *
+
+# Button Listener
+# todo Меньше кода
+#
+def buttons(bot, event):
+    # Covid(Корона вирус) доставерные новости
+    if event.data['callbackData'] == "call_button_corona_news":
+        HandlerCoronaNews(bot, event.data)
+
+        # Безопасность
+    elif event.data['callbackData'] == "call_button_safety":
+        HandlerSafety(bot, event.data)
+        # Подписка
+    elif event.data['callbackData'] == "call_button_subscribe":
+        HandlerSubscribe(bot, event.data)
+
+
+bot.dispatcher.add_handler(BotButtonCommandHandler(callback=buttons)) #buttonHandler
+
+
+
+def CoronaApiInform():
+    #http://coronavirus-tracker-api.herokuapp.com/v2/locations/187
+    r = requests.get('http://coronavirus-tracker-api.herokuapp.com/v2/locations/187')
+    location = r.json()['location']
+    # print(location['country'])
+    # print(location['latest'])
+
+    confirmed = location['latest']['confirmed'] # индитифицированно
+    deaths = location['latest']['deaths']  # скончалось
+    recovered = location['latest']['recovered']  # восстановились
+
+    return [confirmed, deaths, recovered]
